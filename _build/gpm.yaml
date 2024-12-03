@@ -1,0 +1,10 @@
+name: BentoHook
+version: 0.0.1
+lowCaseName: bentohook
+namespace: BentoHook
+description: 'FormIt hook for Bento email marketing'
+author: matdave
+menus:
+    -
+        text: bentohook.menu
+        action: manage
