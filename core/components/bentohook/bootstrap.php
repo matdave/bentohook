@@ -10,7 +10,7 @@ require_once $namespace['path'] . 'vendor/autoload.php';
 if (!$modx->services->has('bentohook')) {
     // Register base class in the service container
     $modx->services->add('bentohook', function($c) use ($modx) {
-        return new \BentoHook\BentoHook($modx);
+        return new \BentoHook\Service($modx);
     });
 
     // Load packages model, uncomment if you have DB tables

@@ -1,6 +1,6 @@
 <?php
 abstract class BentoHookBaseManagerController extends modExtraManagerController {
-    /** @var \BentoHook\BentoHook $bentohook */
+    /** @var \BentoHook\Service $bentohook */
     public $bentohook;
 
     public function initialize(): void

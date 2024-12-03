@@ -26,7 +26,7 @@ bentohook.panel.Manage = function (config) {
                         items: [
                             {
                                 cls: 'main-wrapper',
-                               html: 'Greetings from John. Thank you for using GPM.'
+                               html: ''
                             }
                         ]
                     }

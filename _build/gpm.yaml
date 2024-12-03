@@ -4,7 +4,45 @@ lowCaseName: bentohook
 namespace: BentoHook
 description: 'FormIt hook for Bento email marketing'
 author: matdave
-menus:
+systemSettings:
     -
-        text: bentohook.menu
-        action: manage
+        key: secret-key
+        value: ''
+    -
+        key: publishable-key
+        value: ''
+    -
+        key: site-uuid
+        value: ''
+snippets:
+    -
+        name: BentoHook
+        description: 'FormIt hook for Bento email marketing'
+        file: BentoHook.php
+        properties:
+            - name: bentoEmail
+              description: 'Email address field'
+              type: text
+            - name: bentoOptin
+              description: 'Opt-in checkbox field'
+              type: checkbox
+            - name: bentoOptout
+              description: 'Opt-out checkbox field'
+              type: checkbox
+            - name: bentoFields
+              description: 'Additional fields to send to Bento'
+              type: text
+    -
+        name: BentoCheckList
+        description: 'Check if email is in Bento list'
+        file: BentoCheckList.php
+        properties:
+            - name: email
+              description: 'Email address to check'
+              type: text
+            - name: inListTpl
+              description: 'Chunk to display if email is in list'
+              type: text
+            - name: notInListTpl
+              description: 'Chunk to display if email is not in list'
+              type: text

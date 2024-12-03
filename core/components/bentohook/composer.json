@@ -3,5 +3,11 @@
     "psr-4": {
       "BentoHook\\": "src/"
     }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "bentonow/bento-php-sdk": "^2.0",
+    "matdave/modxpackage": "dev-main"
   }
 }
