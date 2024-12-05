@@ -1,7 +1,7 @@
 <?php
 
-$BentoHook = new \BentoHook\Service($this->modx, $this->scriptProperties);
+$BentoHook = new \BentoHook\Service($modx, $scriptProperties);
 
-$snippet = new \BentoHook\Elements\Snippets\FormIt($BentoHook, $this->scriptProperties);
+$snippet = new \BentoHook\Elements\Snippets\FormIt($BentoHook, $scriptProperties);
 
-$snippet->run();
+return $snippet->run();

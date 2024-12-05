@@ -1,5 +1,5 @@
 name: BentoHook
-version: 0.0.1
+version: 0.0.2
 lowCaseName: bentohook
 namespace: BentoHook
 description: 'FormIt hook for Bento email marketing'
