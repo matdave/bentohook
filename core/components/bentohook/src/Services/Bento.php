@@ -23,6 +23,7 @@ class Bento
         $siteUuid = $this->service->getOption('site-uuid');
 
         if (empty($secret) || empty($publishable) || empty($siteUuid)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Missing Bento credentials');
             throw new \Exception('Missing Bento credentials');
         }
 
@@ -38,17 +39,40 @@ class Bento
 
     public function addSubscriber($email, $fields = []): bool
     {
-        return $this->bento->V1->addSubscriber([
-            'email' => $email,
-            'fields' => $fields
-        ]);
+        try {
+            $subscribe = $this->bento->V1->addSubscriber([
+                'email' => $email,
+                'fields' => []
+            ]);
+        } catch (\Exception $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error adding subscriber: ' . $e->getMessage());
+            return false;
+        }
+        if ($subscribe) {
+            foreach ($fields as $key => $value) {
+                $this->bento->V1->Commands->addField([
+                    'email' => $email,
+                    'field' => [
+                        'key' => $key,
+                        'value' => $value,
+                    ],
+                ]);
+            }
+        }
+        return $subscribe;
     }
 
     public function removeSubscriber($email): bool
     {
-        return $this->bento->V1->removeSubscriber([
-            'email' => $email
-        ]);
+        try {
+            $remove = $this->bento->V1->removeSubscriber([
+                'email' => $email
+            ]);
+        } catch (\Exception $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error removing subscriber: ' . $e->getMessage());
+            return false;
+        }
+        return $remove;
     }
 
     public function getSubscriber($email): array

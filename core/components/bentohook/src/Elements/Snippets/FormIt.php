@@ -10,18 +10,21 @@ class FormIt extends Snippet
     private $debug = false;
     public function run()
     {
+        $hook = $this->scriptProperties['hook'];
+        $values = $hook->getValues();
         $this->debug = $this->modx->getOption('debug', $this->scriptProperties, false);
+        if (!$this->debug) {
+            $this->debug = $this->modx->getOption('bentoDebug', $hook->formit->config, false);
+        }
         try {
             $bento = new Bento($this->service);
         } catch (\Exception $e) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'BentoHook: ' . $e->getMessage());
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, 'BentoHook: ' . $e->getMessage());
                 return false;
             }
             return true;
         }
-        $hook = $this->scriptProperties['hook'];
-        $values = $hook->getValues();
 
         $emailField = $this->modx->getOption('bentoEmail', $hook->formit->config, 'email');
 
@@ -44,7 +47,10 @@ class FormIt extends Snippet
 
         if (empty($optin) && !empty($optinField)) {
             if (!empty($optout)) {
-                $bento->removeSubscriber($email);
+                $remove = $bento->removeSubscriber($email);
+                if ($remove && $this->debug) {
+                    $this->modx->log(modX::LOG_LEVEL_INFO, 'BentoHook: remove response ' . json_encode($remove));
+                }
                 return true;
             } else {
                 if ($this->debug) {
@@ -55,7 +61,10 @@ class FormIt extends Snippet
             }
         }
 
-        $bento->addSubscriber($email, $fields);
+        $subscribe = $bento->addSubscriber($email, $fields);
+        if ($subscribe && $this->debug) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'BentoHook: subscribe response ' . json_encode($subscribe));
+        }
         return true;
     }
 
