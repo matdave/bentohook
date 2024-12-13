@@ -3,14 +3,22 @@
 namespace BentoHook\Services;
 
 use BentoHook\Service;
-use bentonow\Bento\BentoAnalytics;
+use MatDave\MODXPackage\Traits\Curl;
 use MODX\Revolution\modX;
 
 class Bento
 {
-    private Service $service;
+    use Curl;
 
-    private BentoAnalytics $bento;
+    private Service $service;
+    private modX $modx;
+
+
+    private string $api = 'https://app.bentonow.com/api/v1';
+
+    private string $secret;
+    private string $publishable;
+    private string $siteUuid;
 
     /**
      * @throws \Exception
@@ -18,67 +26,84 @@ class Bento
     public function __construct(Service $service)
     {
         $this->service = $service;
-        $secret = $this->service->getOption('secret-key');
-        $publishable = $this->service->getOption('publishable-key');
-        $siteUuid = $this->service->getOption('site-uuid');
+        $this->modx = $service->modx;
+        $this->secret = $this->service->getOption('secret-key');
+        $this->publishable = $this->service->getOption('publishable-key');
+        $this->siteUuid = $this->service->getOption('site-uuid');
 
-        if (empty($secret) || empty($publishable) || empty($siteUuid)) {
+        if (empty($this->secret) || empty($this->publishable) || empty($this->siteUuid)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, 'Missing Bento credentials');
             throw new \Exception('Missing Bento credentials');
         }
-
-        $this->bento = new BentoAnalytics([
-            'authentication' => [
-                'secretKey' => $secret,
-                'publishableKey' => $publishable
-            ],
-            'siteUuid' => $siteUuid
-        ]);
-
     }
 
-    public function addSubscriber($email, $fields = []): bool
+    public function addSubscriber($email, $fields = []): array
     {
-        try {
-            $subscribe = $this->bento->V1->addSubscriber([
+        $command = [];
+        $command[] = [
+            'command' => 'subscribe',
+            'email' => $email,
+        ];
+        foreach ($fields as $key => $value) {
+            $command[] = [
+                'command' => 'add_field',
                 'email' => $email,
-                'fields' => []
-            ]);
-        } catch (\Exception $e) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error adding subscriber: ' . $e->getMessage());
-            return false;
+                'query' => [
+                    'key' => $key,
+                    'value' => $value,
+                ]
+            ];
         }
-        if ($subscribe) {
-            foreach ($fields as $key => $value) {
-                $this->bento->V1->Commands->addField([
-                    'email' => $email,
-                    'field' => [
-                        'key' => $key,
-                        'value' => $value,
-                    ],
-                ]);
-            }
-        }
-        return $subscribe;
+        $subscribe = $this->curl(
+            '/fetch/commands',
+            'POST',
+            [
+                'command' => $command,
+                'site_uuid' => $this->siteUuid,
+            ],
+            $this->getHeaders()
+        );
+        return json_decode($subscribe, true);
     }
 
-    public function removeSubscriber($email): bool
+    public function removeSubscriber($email)
     {
-        try {
-            $remove = $this->bento->V1->removeSubscriber([
-                'email' => $email
-            ]);
-        } catch (\Exception $e) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error removing subscriber: ' . $e->getMessage());
-            return false;
-        }
-        return $remove;
+        $remove = $this->curl(
+            '/fetch/commands',
+            'POST',
+            [
+                'command' => [
+                    [
+                        'command' => 'unsubscribe',
+                        'email' => $email,
+                    ]
+                ],
+                'site_uuid' => $this->siteUuid,
+            ],
+            $this->getHeaders()
+        );
+        return json_decode($remove, true);
     }
 
     public function getSubscriber($email): array
     {
-        return $this->bento->V1->Subscribers->getSubscribers([
-            'email' => $email
-        ]);
+        $subscribers = $this->curl(
+            '/fetch/subscribers',
+            'GET',
+            [
+                'email' => $email,
+                'site_uuid' => $this->siteUuid,
+            ],
+            $this->getHeaders()
+        );
+        return json_decode($subscribers, true);
+    }
+
+    private function getHeaders(): array
+    {
+        return [
+            'Accept: application/json',
+            'Authorization: Basic ' . base64_encode($this->publishable . ':' . $this->secret),
+        ];
     }
 }

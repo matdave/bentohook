@@ -7,7 +7,6 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "bentonow/bento-php-sdk": "^2.0",
-    "matdave/modxpackage": "dev-main"
+    "matdave/modxpackage": "^1.0"
   }
 }

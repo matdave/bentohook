@@ -4,6 +4,7 @@ namespace BentoHook\Elements\Snippets;
 
 use BentoHook\Services\Bento;
 use MatDave\MODXPackage\Elements\Snippet\Snippet;
+use MODX\Revolution\modX;
 
 class FormIt extends Snippet
 {
