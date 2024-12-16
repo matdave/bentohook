@@ -54,21 +54,19 @@ class Bento
                 ]
             ];
         }
-        $subscribe = $this->curl(
+        return $this->sendRequest(
             '/fetch/commands',
             'POST',
             [
                 'command' => $command,
                 'site_uuid' => $this->siteUuid,
-            ],
-            $this->getHeaders()
+            ]
         );
-        return json_decode($subscribe, true);
     }
 
-    public function removeSubscriber($email)
+    public function removeSubscriber($email): array
     {
-        $remove = $this->curl(
+        return $this->sendRequest(
             '/fetch/commands',
             'POST',
             [
@@ -79,31 +77,36 @@ class Bento
                     ]
                 ],
                 'site_uuid' => $this->siteUuid,
-            ],
-            $this->getHeaders()
+            ]
         );
-        return json_decode($remove, true);
     }
 
     public function getSubscriber($email): array
     {
-        $subscribers = $this->curl(
+       return $this->sendRequest(
             '/fetch/subscribers',
             'GET',
             [
                 'email' => $email,
                 'site_uuid' => $this->siteUuid,
-            ],
-            $this->getHeaders()
+            ]
         );
-        return json_decode($subscribers, true);
     }
 
-    private function getHeaders(): array
+    private function sendRequest($path, $method = 'GET', $params = []): array
     {
-        return [
-            'Accept: application/json',
-            'Authorization: Basic ' . base64_encode($this->publishable . ':' . $this->secret),
-        ];
+        $response = $this->curl(
+            $path,
+            $method,
+            $params,
+            [
+                'Accept: application/json',
+            ],
+            [
+                CURLOPT_USERPWD => $this->publishable . ':' . $this->secret,
+                CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+            ]
+        );
+        return json_decode($response, true);
     }
 }

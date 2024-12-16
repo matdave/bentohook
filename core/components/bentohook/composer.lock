@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "matdave/modxpackage",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matdave/modxpackage.git",
-                "reference": "3fc3583e2bbcfc32423894743602f121a72690e2"
+                "reference": "0ecf5d71bf285298b9f07c11c1ff1186ea04e5f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matdave/modxpackage/zipball/3fc3583e2bbcfc32423894743602f121a72690e2",
-                "reference": "3fc3583e2bbcfc32423894743602f121a72690e2",
+                "url": "https://api.github.com/repos/matdave/modxpackage/zipball/0ecf5d71bf285298b9f07c11c1ff1186ea04e5f5",
+                "reference": "0ecf5d71bf285298b9f07c11c1ff1186ea04e5f5",
                 "shasum": ""
             },
             "require": {
@@ -51,9 +51,9 @@
             ],
             "support": {
                 "issues": "https://github.com/matdave/modxpackage/issues",
-                "source": "https://github.com/matdave/modxpackage/tree/1.0.0"
+                "source": "https://github.com/matdave/modxpackage/tree/1.0.1"
             },
-            "time": "2024-12-13T20:59:57+00:00"
+            "time": "2024-12-16T16:46:03+00:00"
         }
     ],
     "packages-dev": [],
