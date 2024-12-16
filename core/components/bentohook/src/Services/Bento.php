@@ -45,6 +45,9 @@ class Bento
             'email' => $email,
         ];
         foreach ($fields as $key => $value) {
+            if (empty($value) || empty($key)) {
+                continue;
+            }
             $command[] = [
                 'command' => 'add_field',
                 'email' => $email,
@@ -95,6 +98,8 @@ class Bento
 
     private function sendRequest($path, $method = 'GET', $params = []): array
     {
+        // create cookie file
+        $cookie = tempnam(sys_get_temp_dir(), 'bento_cookie');
         $response = $this->curl(
             $path,
             $method,
@@ -105,6 +110,9 @@ class Bento
             [
                 CURLOPT_USERPWD => $this->publishable . ':' . $this->secret,
                 CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+                CURLOPT_COOKIEJAR => $cookie,
+                CURLOPT_COOKIEFILE => $cookie,
+                CURLOPT_USERAGENT => 'MODX BentoHook',
             ]
         );
         return json_decode($response, true);
