@@ -13,9 +13,9 @@ class FormIt extends Snippet
     {
         $hook = $this->scriptProperties['hook'];
         $values = $hook->getValues();
-        $this->debug = $this->modx->getOption('debug', $this->scriptProperties, false);
-        if (!$this->debug) {
-            $this->debug = $this->modx->getOption('bentoDebug', $hook->formit->config, false);
+        $this->debug = ((int) $this->modx->getOption('debug', $this->scriptProperties, 0)) == 1;
+        if (!isset($this->debug)) {
+            $this->debug = ((int) $this->modx->getOption('bentoDebug', $hook->formit->config, 0)) == 1;
         }
         try {
             $bento = new Bento($this->service);
@@ -95,7 +95,7 @@ class FormIt extends Snippet
             $fields = explode(',', $fields);
             foreach ($fields as $field) {
                 $field = explode('==', $field);
-                $fieldsNew[$field[0]] = ($field[1]) ? $field[1] : $field[0];
+                $fieldsNew[$field[0]] = ($field[1]) ?: $field[0];
             }
             $fields = $fieldsNew;
         }
