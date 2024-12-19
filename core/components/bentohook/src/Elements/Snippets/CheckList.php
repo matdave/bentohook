@@ -21,7 +21,7 @@ class CheckList extends Snippet
 
         $subscriber = $bento->getSubscriber($email);
 
-        if (empty($subscriber)) {
+        if (empty($subscriber) || empty($subscriber['data'])) {
             return ($notInListTpl) ? $this->modx->getChunk($notInListTpl) : false;
         } else {
             return ($inListTpl) ? $this->modx->getChunk($inListTpl) : true;
